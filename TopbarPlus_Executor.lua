@@ -164,41 +164,41 @@ function Icon.new()
 	setmetatable(self, Icon)
 	local janitor = Janitor.new()
 	self.janitor = janitor
-	self.themesJanitor = janitor:add(Janitor.new())
-	self.singleClickJanitor = janitor:add(Janitor.new())
-	self.captionJanitor = janitor:add(Janitor.new())
-	self.joinJanitor = janitor:add(Janitor.new())
-	self.menuJanitor = janitor:add(Janitor.new())
-	self.dropdownJanitor = janitor:add(Janitor.new())
+	self.themesJanitor = janitor:Add(Janitor.new())
+	self.singleClickJanitor = janitor:Add(Janitor.new())
+	self.captionJanitor = janitor:Add(Janitor.new())
+	self.joinJanitor = janitor:Add(Janitor.new())
+	self.menuJanitor = janitor:Add(Janitor.new())
+	self.dropdownJanitor = janitor:Add(Janitor.new())
 	local iconUID = Utility.generateUID()
 	iconsDict[iconUID] = self
-	janitor:add(function()
+	janitor:Add(function()
 		iconsDict[iconUID] = nil
 	end)
-	self.selected = janitor:add(Signal.new())
-	self.deselected = janitor:add(Signal.new())
-	self.toggled = janitor:add(Signal.new())
-	self.viewingStarted = janitor:add(Signal.new())
-	self.viewingEnded = janitor:add(Signal.new())
-	self.stateChanged = janitor:add(Signal.new())
-	self.notified = janitor:add(Signal.new())
-	self.noticeStarted = janitor:add(Signal.new())
-	self.noticeChanged = janitor:add(Signal.new())
-	self.endNotices = janitor:add(Signal.new())
-	self.toggleKeyAdded = janitor:add(Signal.new())
-	self.fakeToggleKeyChanged = janitor:add(Signal.new())
-	self.alignmentChanged = janitor:add(Signal.new())
-	self.updateSize = janitor:add(Signal.new())
-	self.resizingComplete = janitor:add(Signal.new())
-	self.joinedParent = janitor:add(Signal.new())
-	self.menuSet = janitor:add(Signal.new())
-	self.dropdownSet = janitor:add(Signal.new())
-	self.updateMenu = janitor:add(Signal.new())
-	self.startMenuUpdate = janitor:add(Signal.new())
-	self.childThemeModified = janitor:add(Signal.new())
-	self.indicatorSet = janitor:add(Signal.new())
-	self.dropdownChildAdded = janitor:add(Signal.new())
-	self.menuChildAdded = janitor:add(Signal.new())
+	self.selected = janitor:Add(Signal.new())
+	self.deselected = janitor:Add(Signal.new())
+	self.toggled = janitor:Add(Signal.new())
+	self.viewingStarted = janitor:Add(Signal.new())
+	self.viewingEnded = janitor:Add(Signal.new())
+	self.stateChanged = janitor:Add(Signal.new())
+	self.notified = janitor:Add(Signal.new())
+	self.noticeStarted = janitor:Add(Signal.new())
+	self.noticeChanged = janitor:Add(Signal.new())
+	self.endNotices = janitor:Add(Signal.new())
+	self.toggleKeyAdded = janitor:Add(Signal.new())
+	self.fakeToggleKeyChanged = janitor:Add(Signal.new())
+	self.alignmentChanged = janitor:Add(Signal.new())
+	self.updateSize = janitor:Add(Signal.new())
+	self.resizingComplete = janitor:Add(Signal.new())
+	self.joinedParent = janitor:Add(Signal.new())
+	self.menuSet = janitor:Add(Signal.new())
+	self.dropdownSet = janitor:Add(Signal.new())
+	self.updateMenu = janitor:Add(Signal.new())
+	self.startMenuUpdate = janitor:Add(Signal.new())
+	self.childThemeModified = janitor:Add(Signal.new())
+	self.indicatorSet = janitor:Add(Signal.new())
+	self.dropdownChildAdded = janitor:Add(Signal.new())
+	self.menuChildAdded = janitor:Add(Signal.new())
 	self.iconModule = iconModule
 	self.UID = iconUID
 	self.isEnabled = true
@@ -226,7 +226,7 @@ function Icon.new()
 	self.dropdownIcons = {}
 	self.childIconsDict = {}
 	self.creationTime = os.clock()
-	local widget = janitor:add(require(elements.Widget)(self, Icon))
+	local widget = janitor:Add(require(elements.Widget)(self, Icon))
 	self.widget = widget
 	self:setAlignment()
 	totalCreatedIcons += 1
@@ -262,7 +262,7 @@ function Icon.new()
 			handleToggle()
 		end
 	end)
-	janitor:add(UserInputService.InputBegan:Connect(function(input, touchingAnObject)
+	janitor:Add(UserInputService.InputBegan:Connect(function(input, touchingAnObject)
 		if self.locked then
 			return
 		end
@@ -298,7 +298,7 @@ function Icon.new()
 		viewingStarted(dontSetState)
 	end)
 	local touchCount = 0
-	janitor:add(UserInputService.TouchEnded:Connect(viewingEnded))
+	janitor:Add(UserInputService.TouchEnded:Connect(viewingEnded))
 	clickRegion.MouseLeave:Connect(viewingEnded)
 	clickRegion.SelectionGained:Connect(viewingStarted)
 	clickRegion.SelectionLost:Connect(viewingEnded)
@@ -323,7 +323,7 @@ function Icon.new()
 	self.viewingEnded:Connect(function()
 		iconOverlay.Visible = false
 	end)
-	janitor:add(anyIconSelected:Connect(function(incomingIcon)
+	janitor:Add(anyIconSelected:Connect(function(incomingIcon)
 		if incomingIcon ~= self and self.deselectWhenOtherIconSelected and incomingIcon.deselectWhenOtherIconSelected then
 			self:deselect("AutoDeselect", incomingIcon)
 		end
@@ -344,7 +344,7 @@ function Icon.new()
 	if origin and originsScreenGui and originsScreenGui.ResetOnSpawn == true then
 		self.originsScreenGui = originsScreenGui
 		Utility.localPlayerRespawned(function()
-			self:destroy()
+			self:Destroy()
 		end)
 	end
 	self.toggled:Connect(function(isSelected)
@@ -775,7 +775,7 @@ function Icon:call(callback, ...)
 	return self
 end
 function Icon:addToJanitor(callback, methodName, index)
-	self.janitor:add(callback, methodName, index)
+	self.janitor:Add(callback, methodName, index)
 	return self
 end
 function Icon:lock()
@@ -805,9 +805,9 @@ function Icon:autoDeselect(bool)
 end
 function Icon:oneClick(bool)
 	local singleClickJanitor = self.singleClickJanitor
-	singleClickJanitor:clean()
+	singleClickJanitor:Cleanup()
 	if bool or bool == nil then
-		singleClickJanitor:add(self.selected:Connect(function()
+		singleClickJanitor:Add(self.selected:Connect(function()
 			self:deselect("OneClick", self)
 		end))
 	end
@@ -819,13 +819,13 @@ function Icon:setCaption(text)
 		return self
 	end
 	local captionJanitor = self.captionJanitor
-	self.captionJanitor:clean()
+	self.captionJanitor:Cleanup()
 	if not text or text == "" then
 		self.caption = nil
 		self.captionText = nil
 		return self
 	end
-	local caption = captionJanitor:add(require(elements.Caption)(self))
+	local caption = captionJanitor:Add(require(elements.Caption)(self))
 	caption:SetAttribute("CaptionText", text)
 	self.caption = caption
 	self.captionText = text
@@ -840,7 +840,7 @@ function Icon:setCaptionHint(keyCodeEnum)
 end
 function Icon:leave()
 	local joinJanitor = self.joinJanitor
-	joinJanitor:clean()
+	joinJanitor:Cleanup()
 	return self
 end
 function Icon:joinMenu(parentIcon)
@@ -892,7 +892,7 @@ end
 function Icon:setIndicator(keyCode)
 	local indicator = self.indicator
 	if not indicator then
-		indicator = self.janitor:add(require(elements.Indicator)(self, Icon))
+		indicator = self.janitor:Add(require(elements.Indicator)(self, Icon))
 		self.indicator = indicator
 	end
 	self.indicatorSet:Fire(keyCode)
@@ -1007,7 +1007,7 @@ function Icon:convertLabelToNumberSpinner(numberSpinner, callback)
 	end)
 	return self
 end
-function Icon:destroy()
+function Icon:Destroy()
 	if self.isDestroyed then
 		return
 	end
@@ -1016,7 +1016,7 @@ function Icon:destroy()
 		self:leave()
 	end
 	self.isDestroyed = true
-	self.janitor:clean()
+	self.janitor:Cleanup()
 	Icon.iconRemoved:Fire(self)
 end
 Icon.Destroy = Icon.destroy
@@ -1458,13 +1458,13 @@ end
 local Janitor = require(script.Parent.Packages.Janitor)
 local GuiService = game:GetService("GuiService")
 function Utility.clipOutside(icon, instance)
-	local cloneJanitor = icon.janitor:add(Janitor.new())
+	local cloneJanitor = icon.janitor:Add(Janitor.new())
 	instance.Destroying:Once(function()
 		cloneJanitor:Destroy()
 	end)
-	icon.janitor:add(instance)
+	icon.janitor:Add(instance)
 	local originalParent = instance.Parent
-	local clone = cloneJanitor:add(Instance.new("Frame"))
+	local clone = cloneJanitor:Add(Instance.new("Frame"))
 	clone:SetAttribute("IsAClippedClone", true)
 	clone.Name = instance.Name
 	clone.AnchorPoint = instance.AnchorPoint
@@ -1491,7 +1491,7 @@ function Utility.clipOutside(icon, instance)
 		instance.AnchorPoint = Vector2.new(0, 0)
 		instance.Parent = Utility.getClippedContainer(screenGui)
 	end
-	cloneJanitor:add(icon.alignmentChanged:Connect(updateScreenGui))
+	cloneJanitor:Add(icon.alignmentChanged:Connect(updateScreenGui))
 	updateScreenGui()
 	for _, child in pairs(instance:GetChildren()) do
 		if child:IsA("UIAspectRatioConstraint") then
@@ -1511,7 +1511,7 @@ function Utility.clipOutside(icon, instance)
 		end
 		Utility.setVisible(instance, isVisible, "ClipHandler")
 	end
-	cloneJanitor:add(widget:GetPropertyChangedSignal("Visible"):Connect(updateVisibility))
+	cloneJanitor:Add(widget:GetPropertyChangedSignal("Visible"):Connect(updateVisibility))
 	local previousScroller
 	local function checkIfOutsideParentXBounds()
 		task.defer(function()
@@ -1560,7 +1560,7 @@ function Utility.clipOutside(icon, instance)
 				local connection = parentInstance:GetPropertyChangedSignal("AbsoluteWindowSize"):Connect(function()
 					checkIfOutsideParentXBounds()
 				end)
-				cloneJanitor:add(connection, "Disconnect", "TrackUtilityScroller-"..ourUID)
+				cloneJanitor:Add(connection, "Disconnect", "TrackUtilityScroller-"..ourUID)
 			end
 		end)
 	end
@@ -1594,14 +1594,14 @@ function Utility.clipOutside(icon, instance)
 			instance[property] = absoluteValue
 		end
 		local updatePropertyStaggered = Utility.createStagger(0.01, updateProperty)
-		cloneJanitor:add(clone:GetPropertyChangedSignal(absoluteProperty):Connect(updatePropertyStaggered))
-		cloneJanitor:add(clone:GetAttributeChangedSignal("ForceUpdate"):Connect(function()
+		cloneJanitor:Add(clone:GetPropertyChangedSignal(absoluteProperty):Connect(updatePropertyStaggered))
+		cloneJanitor:Add(clone:GetAttributeChangedSignal("ForceUpdate"):Connect(function()
 			updatePropertyStaggered()
 		end))
 		local updatePropertyPatch = Utility.createStagger(0.5, updateProperty, true)
-		cloneJanitor:add(clone:GetPropertyChangedSignal(absoluteProperty):Connect(updatePropertyPatch))
+		cloneJanitor:Add(clone:GetPropertyChangedSignal(absoluteProperty):Connect(updatePropertyPatch))
 		if property == "Position" then
-			cloneJanitor:add(screenGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+			cloneJanitor:Add(screenGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
 				updatePropertyStaggered()
 			end))
 		end
@@ -1610,13 +1610,13 @@ function Utility.clipOutside(icon, instance)
 	checkIfOutsideParentXBounds()
 	updateVisibility()
 	trackProperty("Position")
-	cloneJanitor:add(instance:GetPropertyChangedSignal("Visible"):Connect(function()
+	cloneJanitor:Add(instance:GetPropertyChangedSignal("Visible"):Connect(function()
 	end))
 	local shouldTrackCloneSize = instance:GetAttribute("TrackCloneSize")
 	if shouldTrackCloneSize then
 		trackProperty("Size")
 	else
-		cloneJanitor:add(instance:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+		cloneJanitor:Add(instance:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
 			local absolute = instance.AbsoluteSize
 			clone.Size = UDim2.fromOffset(absolute.X, absolute.Y)
 		end))
@@ -1625,7 +1625,7 @@ function Utility.clipOutside(icon, instance)
 end
 function Utility.joinFeature(originalIcon, parentIcon, iconsArray, scrollingFrameOrFrame)
 	local joinJanitor = originalIcon.joinJanitor
-	joinJanitor:clean()
+	joinJanitor:Cleanup()
 	if not scrollingFrameOrFrame then
 		originalIcon:leave()
 		return
@@ -1639,7 +1639,7 @@ function Utility.joinFeature(originalIcon, parentIcon, iconsArray, scrollingFram
 		end
 		originalIcon:setAlignment(parentAlignment, true)
 	end
-	joinJanitor:add(parentIcon.alignmentChanged:Connect(updateAlignent))
+	joinJanitor:Add(parentIcon.alignmentChanged:Connect(updateAlignent))
 	updateAlignent()
 	originalIcon:modifyTheme({"IconButton", "BackgroundTransparency", 1}, "JoinModification")
 	originalIcon:modifyTheme({"ClickRegion", "Active", false}, "JoinModification")
@@ -1652,9 +1652,9 @@ function Utility.joinFeature(originalIcon, parentIcon, iconsArray, scrollingFram
 	local function makeSelectable()
 		clickRegion.Selectable = parentIcon.isSelected
 	end
-	joinJanitor:add(parentIcon.toggled:Connect(makeSelectable))
+	joinJanitor:Add(parentIcon.toggled:Connect(makeSelectable))
 	task.defer(makeSelectable)
-	joinJanitor:add(function()
+	joinJanitor:Add(function()
 		clickRegion.Selectable = true
 	end)
 	local originalIconUID = originalIcon.UID
@@ -1665,7 +1665,7 @@ function Utility.joinFeature(originalIcon, parentIcon, iconsArray, scrollingFram
 		parentIcon:setEnabled(true)
 	end
 	originalIcon.joinedParent:Fire(parentIcon)
-	joinJanitor:add(function()
+	joinJanitor:Add(function()
 		local joinedFrame = originalIcon.joinedFrame
 		if not joinedFrame then
 			return
@@ -1883,7 +1883,7 @@ return function(icon)
 		local absolute = caption.AbsoluteSize
 		captionClone.Size = UDim2.fromOffset(absolute.X, absolute.Y)
 	end
-	captionJanitor:add(caption:GetPropertyChangedSignal("AbsoluteSize"):Connect(matchSize))
+	captionJanitor:Add(caption:GetPropertyChangedSignal("AbsoluteSize"):Connect(matchSize))
 	matchSize()
 	local isCompletelyEnabled = false
 	local captionHeader = caption.Box.Header
@@ -1959,16 +1959,16 @@ return function(icon)
 			updateCaretConnection:Disconnect()
 		end)
 	end
-	captionJanitor:add(clickRegion:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
+	captionJanitor:Add(clickRegion:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
 		updatePosition()
 	end))
 	updatePosition(false)
-	captionJanitor:add(icon.toggleKeyAdded:Connect(updateHotkey))
+	captionJanitor:Add(icon.toggleKeyAdded:Connect(updateHotkey))
 	for keyCodeEnum, _ in pairs(icon.bindedToggleKeys) do
 		updateHotkey(keyCodeEnum)
 		break
 	end
-	captionJanitor:add(icon.fakeToggleKeyChanged:Connect(updateHotkey))
+	captionJanitor:Add(icon.fakeToggleKeyChanged:Connect(updateHotkey))
 	local fakeToggleKey = icon.fakeToggleKey
 	if fakeToggleKey then
 		updateHotkey(fakeToggleKey)
@@ -1997,7 +1997,7 @@ return function(icon)
 	local WAIT_DURATION = 0.5
 	local RECOVER_PERIOD = 0.3
 	local Icon = require(icon.iconModule)
-	captionJanitor:add(icon.stateChanged:Connect(function(stateName)
+	captionJanitor:Add(icon.stateChanged:Connect(function(stateName)
 		if stateName == "Viewing" then
 			local lastClock = Icon.captionLastClosedClock
 			local clockDifference = (lastClock and os.clock() - lastClock) or 999
@@ -2230,7 +2230,7 @@ return function(icon)
 		end
 		return newValue
 	end)
-	icon.janitor:add(GuiService:GetPropertyChangedSignal("PreferredTransparency"):Connect(function()
+	icon.janitor:Add(GuiService:GetPropertyChangedSignal("PreferredTransparency"):Connect(function()
 		icon:refreshAppearance(dropdown, "BackgroundTransparency")
 	end))
 	local UICorner = Instance.new("UICorner")
@@ -2292,7 +2292,7 @@ return function(icon)
 			{"Selection", "Position", UDim2.new(0, PADDING/2, 0, PADDING/2)},
 		})
 		task.defer(function()
-			childIcon.joinJanitor:add(function()
+			childIcon.joinJanitor:Add(function()
 				childIcon:removeModification(modificationUID)
 			end)
 		end)
@@ -2300,7 +2300,7 @@ return function(icon)
 	icon.dropdownSet:Connect(function(arrayOfIcons)
 		for i, otherIconUID in pairs(icon.dropdownIcons) do
 			local otherIcon = Icon.getIconByUID(otherIconUID)
-			otherIcon:destroy()
+			otherIcon:Destroy()
 		end
 		if type(arrayOfIcons) == "table" then
 			for i, otherIcon in pairs(arrayOfIcons) do
@@ -2380,7 +2380,7 @@ return function(icon)
 			end)
 		end
 	end
-	dropdownJanitor:add(icon.toggled:Connect(updateVisibility))
+	dropdownJanitor:Add(icon.toggled:Connect(updateVisibility))
 	updateVisibility()
 	local function updateChildSize()
 		local tweenInfo = getTweenInfo()
@@ -2401,7 +2401,7 @@ return function(icon)
 			openTween = nil
 		end)
 	end
-	dropdownJanitor:add(icon.toggled:Connect(updateVisibility))
+	dropdownJanitor:Add(icon.toggled:Connect(updateVisibility))
 	local updateCount = 0
 	local isUpdating = false
 	local function updateMaxIconsListener()
@@ -2454,13 +2454,13 @@ return function(icon)
 		totalHeight += dropdownPadding.PaddingTop.Offset + dropdownPadding.PaddingBottom.Offset
 		dropdownScroller.Size = UDim2.fromOffset(0, totalHeight)
 	end
-	dropdownJanitor:add(dropdownScroller:GetPropertyChangedSignal("AbsoluteCanvasSize"):Connect(updateMaxIconsListener))
-	dropdownJanitor:add(dropdownScroller.ChildAdded:Connect(updateMaxIconsListener))
-	dropdownJanitor:add(dropdownScroller.ChildRemoved:Connect(updateChildSize))
-	dropdownJanitor:add(dropdownScroller.ChildRemoved:Connect(updateMaxIconsListener))
-	dropdownJanitor:add(dropdown:GetAttributeChangedSignal("MaxIcons"):Connect(updateMaxIconsListener))
-	dropdownJanitor:add(dropdown:GetAttributeChangedSignal("MaxIcons"):Connect(updateChildSize))
-	dropdownJanitor:add(icon.childThemeModified:Connect(updateMaxIconsListener))
+	dropdownJanitor:Add(dropdownScroller:GetPropertyChangedSignal("AbsoluteCanvasSize"):Connect(updateMaxIconsListener))
+	dropdownJanitor:Add(dropdownScroller.ChildAdded:Connect(updateMaxIconsListener))
+	dropdownJanitor:Add(dropdownScroller.ChildRemoved:Connect(updateChildSize))
+	dropdownJanitor:Add(dropdownScroller.ChildRemoved:Connect(updateMaxIconsListener))
+	dropdownJanitor:Add(dropdown:GetAttributeChangedSignal("MaxIcons"):Connect(updateMaxIconsListener))
+	dropdownJanitor:Add(dropdown:GetAttributeChangedSignal("MaxIcons"):Connect(updateChildSize))
+	dropdownJanitor:Add(icon.childThemeModified:Connect(updateMaxIconsListener))
 	updateMaxIconsListener()
 	local function connectVisibilityListeners(child)
 		if child:IsA("GuiObject") then
@@ -2519,7 +2519,7 @@ return function(icon, Icon)
 			indicatorButton.Size = UDim2.fromScale(1, 1)
 		end
 	end
-	icon.janitor:add(GuiService:GetPropertyChangedSignal("SelectedObject"):Connect(selectionChanged))
+	icon.janitor:Add(GuiService:GetPropertyChangedSignal("SelectedObject"):Connect(selectionChanged))
 	selectionChanged()
 	local imageLabel = Instance.new("ImageLabel")
 	imageLabel.LayoutOrder = 2
@@ -2549,7 +2549,7 @@ return function(icon, Icon)
 		icon:modifyTheme({"Indicator", "Visible", visibility})
 		icon.updateSize:Fire()
 	end
-	icon.janitor:add(GamepadService:GetPropertyChangedSignal("GamepadCursorEnabled"):Connect(setIndicatorVisible))
+	icon.janitor:Add(GamepadService:GetPropertyChangedSignal("GamepadCursorEnabled"):Connect(setIndicatorVisible))
 	icon.indicatorSet:Connect(function(keyCode)
 		local visibility = false
 		if keyCode then
@@ -2609,13 +2609,13 @@ return function(icon)
 		local totalIcons = #icon.menuIcons
 		if hasStartedMenu then
 			if totalIcons <= 0 then
-				menuJanitor:clean()
+				menuJanitor:Cleanup()
 				hasStartedMenu = false
 			end
 			return
 		end
 		hasStartedMenu = true
-		menuJanitor:add(icon.toggled:Connect(function()
+		menuJanitor:Add(icon.toggled:Connect(function()
 			if #icon.menuIcons > 0 then
 				icon.updateSize:Fire()
 			end
@@ -2624,7 +2624,7 @@ return function(icon)
 			{"Menu", "Active", true},
 		})
 		task.defer(function()
-			menuJanitor:add(function()
+			menuJanitor:Add(function()
 				icon:removeModification(modificationUID)
 			end)
 		end)
@@ -2637,8 +2637,8 @@ return function(icon)
 				menu.CanvasPosition = Vector2.new(menu.CanvasPosition.X - difference, 0)
 			end
 		end
-		menuJanitor:add(icon.selected:Connect(rightAlignCanvas))
-		menuJanitor:add(menu:GetPropertyChangedSignal("AbsoluteCanvasSize"):Connect(rightAlignCanvas))
+		menuJanitor:Add(icon.selected:Connect(rightAlignCanvas))
+		menuJanitor:Add(menu:GetPropertyChangedSignal("AbsoluteCanvasSize"):Connect(rightAlignCanvas))
 		local stateGroup = icon:getStateGroup()
 		local imageDeselected = Themes.getThemeValue(stateGroup, "IconImage", "Image", "Deselected")
 		local imageSelected = Themes.getThemeValue(stateGroup, "IconImage", "Image", "Selected")
@@ -2667,14 +2667,14 @@ return function(icon)
 			icon:modifyTheme({"IconSpot", "LayoutOrder", spotIndex})
 			menuGap.LayoutOrder = gapIndex
 		end
-		menuJanitor:add(icon.alignmentChanged:Connect(updateAlignent))
+		menuJanitor:Add(icon.alignmentChanged:Connect(updateAlignent))
 		updateAlignent()
 		menu:GetAttributeChangedSignal("MenuCanvasWidth"):Connect(function()
 			local canvasWidth = menu:GetAttribute("MenuCanvasWidth")
 			local canvasY = menu.CanvasSize.Y
 			menu.CanvasSize = UDim2.new(0, canvasWidth, canvasY.Scale, canvasY.Offset)
 		end)
-		menuJanitor:add(icon.updateMenu:Connect(function()
+		menuJanitor:Add(icon.updateMenu:Connect(function()
 			local maxIcons = menu:GetAttribute("MaxIcons")
 			if not maxIcons then
 				return
@@ -2706,17 +2706,17 @@ return function(icon)
 				icon.startMenuUpdate:Fire()
 			end)
 		end
-		menuJanitor:add(menu.ChildAdded:Connect(startMenuUpdate))
-		menuJanitor:add(menu.ChildRemoved:Connect(startMenuUpdate))
-		menuJanitor:add(menu:GetAttributeChangedSignal("MaxIcons"):Connect(startMenuUpdate))
-		menuJanitor:add(menu:GetAttributeChangedSignal("MaxWidth"):Connect(startMenuUpdate))
+		menuJanitor:Add(menu.ChildAdded:Connect(startMenuUpdate))
+		menuJanitor:Add(menu.ChildRemoved:Connect(startMenuUpdate))
+		menuJanitor:Add(menu:GetAttributeChangedSignal("MaxIcons"):Connect(startMenuUpdate))
+		menuJanitor:Add(menu:GetAttributeChangedSignal("MaxWidth"):Connect(startMenuUpdate))
 		startMenuUpdate()
 	end
 	icon.menuChildAdded:Connect(totalChildrenChanged)
 	icon.menuSet:Connect(function(arrayOfIcons)
 		for i, otherIconUID in pairs(icon.menuIcons) do
 			local otherIcon = Icon.getIconByUID(otherIconUID)
-			otherIcon:destroy()
+			otherIcon:Destroy()
 		end
 		if type(arrayOfIcons) == "table" then
 			for i, otherIcon in pairs(arrayOfIcons) do
@@ -2798,12 +2798,12 @@ return function(icon, Icon)
 		if parentIcon then
 			parentIcon:notify(customClearSignal)
 		end
-		local noticeJanitor = icon.janitor:add(Janitor.new())
-		local noticeComplete = noticeJanitor:add(Signal.new())
-		noticeJanitor:add(icon.endNotices:Connect(function()
+		local noticeJanitor = icon.janitor:Add(Janitor.new())
+		local noticeComplete = noticeJanitor:Add(Signal.new())
+		noticeJanitor:Add(icon.endNotices:Connect(function()
 			noticeComplete:Fire()
 		end))
-		noticeJanitor:add(customClearSignal:Connect(function()
+		noticeJanitor:Add(customClearSignal:Connect(function()
 			noticeComplete:Fire()
 		end))
 		noticeId = noticeId or Utility.generateUID()
@@ -2818,7 +2818,7 @@ return function(icon, Icon)
 		icon.totalNotices += 1
 		updateNotice()
 		noticeComplete:Once(function()
-			noticeJanitor:destroy()
+			noticeJanitor:Destroy()
 			icon.totalNotices -= 1
 			icon.notices[noticeId] = nil
 			updateNotice()
@@ -2909,7 +2909,7 @@ return function(icon, Icon)
 		end
 		return newValue
 	end)
-	icon.janitor:add(GuiService:GetPropertyChangedSignal("PreferredTransparency"):Connect(function()
+	icon.janitor:Add(GuiService:GetPropertyChangedSignal("PreferredTransparency"):Connect(function()
 		icon:refreshAppearance(button, "BackgroundTransparency")
 	end))
 	local iconCorner = Instance.new("UICorner")
@@ -3226,7 +3226,7 @@ return function(icon, Icon)
 	local Players = game:GetService("Players")
 	local localPlayer = Players.LocalPlayer
 	local lastLocaleId = localPlayer.LocaleId
-	icon.janitor:add(localPlayer:GetPropertyChangedSignal("LocaleId"):Connect(function()
+	icon.janitor:Add(localPlayer:GetPropertyChangedSignal("LocaleId"):Connect(function()
 		task.delay(0.2, function()
 			local newLocaleId = localPlayer.LocaleId
 			if newLocaleId ~= lastLocaleId then
@@ -3295,7 +3295,7 @@ function Gamepad.start(incomingIcon)
 					local clickRegion = icon:getInstance("ClickRegion")
 					local selection = icon.selection
 					if not selection then
-						selection = icon.janitor:add(Selection(Icon))
+						selection = icon.janitor:Add(Selection(Icon))
 						selection:SetAttribute("IgnoreVisibilityUpdater", true)
 						selection.Parent = icon.widget
 						icon.selection = selection
@@ -3908,8 +3908,8 @@ function Themes.change(icon)
 end
 function Themes.set(icon, theme)
 	local themesJanitor = icon.themesJanitor
-	themesJanitor:clean()
-	themesJanitor:add(icon.stateChanged:Connect(function()
+	themesJanitor:Cleanup()
+	themesJanitor:Add(icon.stateChanged:Connect(function()
 		Themes.change(icon)
 	end))
 	if typeof(theme) == "Instance" and theme:IsA("ModuleScript") then
