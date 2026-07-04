@@ -18,7 +18,7 @@ local function e_cloneref(inst)
 	return inst
 end
 local __serviceCache = {}
-local function __getService(_, name)
+local function __gs(name)
 	local cached = __serviceCache[name]
 	if cached then
 		return cached
@@ -28,14 +28,6 @@ local function __getService(_, name)
 	__serviceCache[name] = cref
 	return cref
 end
-local __game = setmetatable({}, {
-	__index = function(t, k)
-		if k == "GetService" then
-			return __getService
-		end
-		return __rawGame[k]
-	end
-})
 local __factory = {}
 local __cache = {}
 local function __import(node)
@@ -50,16 +42,16 @@ local function __import(node)
 	if not factory then
 		error("module not found: " .. tostring(node.Name))
 	end
-	local result = factory(node, __import, __game)
+	local result = factory(node, __import)
 	__cache[node] = result
 	return result
 end
 local nd1 = {Name = 'TopbarPlus', Parent = nil}
-local function fn1(script, require, game)
-local UserInputService = game:GetService("UserInputService")
-local ContentProvider = game:GetService("ContentProvider")
-local StarterGui = game:GetService("StarterGui")
-local Players = game:GetService("Players")
+local function fn1(script, require)
+local UserInputService = __gs("UserInputService")
+local ContentProvider = __gs("ContentProvider")
+local StarterGui = __gs("StarterGui")
+local Players = __gs("Players")
 local Types = require(script.Types)
 export type Icon = Types.Icon
 local iconModule = script
@@ -1024,9 +1016,9 @@ return Icon :: Types.StaticIcon
 end
 local nd2 = {Name = 'Attribute', Parent = nd1}
 nd1.Attribute = nd2
-local function fn2(script, require, game)
+local function fn2(script, require)
 task.defer(function()
-	local RunService = game:GetService("RunService")
+	local RunService = __gs("RunService")
 	local VERSION = require(script.Parent.VERSION)
 	local appVersion = VERSION.getAppVersion()
 	local latestVersion = VERSION.getLatestVersion()
@@ -1042,7 +1034,7 @@ return {}
 end
 local nd3 = {Name = 'Reference', Parent = nd1}
 nd1.Reference = nd3
-local function fn3(script, require, game)
+local function fn3(script, require)
 local Reference = {}
 Reference.objectName = "TopbarPlusReference"
 function Reference.addToReplicatedStorage()
@@ -1065,7 +1057,7 @@ return Reference
 end
 local nd4 = {Name = 'Types', Parent = nd1}
 nd1.Types = nd4
-local function fn4(script, require, game)
+local function fn4(script, require)
 type Connection<Variant... = ...any> = {
 	Disconnect: (self: Connection<Variant...>) -> (),
 }
@@ -1350,9 +1342,9 @@ return {}
 end
 local nd5 = {Name = 'Utility', Parent = nd1}
 nd1.Utility = nd5
-local function fn5(script, require, game)
+local function fn5(script, require)
 local Utility = {}
-local Players = game:GetService("Players")
+local Players = __gs("Players")
 local localPlayer = Players.LocalPlayer
 function Utility.createStagger(delayTime, callback, delayInitially)
 	local staggerActive = false
@@ -1456,7 +1448,7 @@ function Utility.getClippedContainer(screenGui)
 	return clippedContainer
 end
 local Janitor = require(script.Parent.Packages.Janitor)
-local GuiService = game:GetService("GuiService")
+local GuiService = __gs("GuiService")
 function Utility.clipOutside(icon, instance)
 	local cloneJanitor = icon.janitor:Add(Janitor.new())
 	instance.Destroying:Once(function()
@@ -1702,7 +1694,7 @@ return Utility
 end
 local nd6 = {Name = 'VERSION', Parent = nd1}
 nd1.VERSION = nd6
-local function fn6(script, require, game)
+local function fn6(script, require)
 local VERSION = {}
 VERSION.appVersion = "v3.4.0"
 VERSION.latestVersion = nil :: string?
@@ -1715,7 +1707,7 @@ function VERSION.getLatestVersion(): string?
 	local placeName = ""
 	while true do
 		local success, hdDevelopmentDetails = pcall(function()
-			return game:GetService("MarketplaceService"):GetProductInfo(DEVELOPMENT_PLACE_ID)
+			return __gs("MarketplaceService"):GetProductInfo(DEVELOPMENT_PLACE_ID)
 		end)
 		if success and hdDevelopmentDetails then
 			placeName = hdDevelopmentDetails.Name
@@ -1743,7 +1735,7 @@ end
 local nd7 = {Name = 'Elements', Parent = nd1}
 local nd8 = {Name = 'Caption', Parent = nd7}
 nd7.Caption = nd8
-local function fn7(script, require, game)
+local function fn7(script, require)
 local CAPTION_COLOR = Color3.fromRGB(39, 41, 48)
 local TEXT_SIZE = 15
 return function(icon)
@@ -1887,7 +1879,7 @@ return function(icon)
 	matchSize()
 	local isCompletelyEnabled = false
 	local captionHeader = caption.Box.Header
-	local UserInputService = game:GetService("UserInputService")
+	local UserInputService = __gs("UserInputService")
 	local function updateHotkey(keyCodeEnum)
 		local hasKeyboard = UserInputService.KeyboardEnabled
 		local text = caption:GetAttribute("CaptionText") or ""
@@ -1911,8 +1903,8 @@ return function(icon)
 	local TWEEN_SPEED = 0.2
 	local TWEEN_INFO_IN = TweenInfo.new(TWEEN_SPEED, EASING_STYLE, Enum.EasingDirection.In)
 	local TWEEN_INFO_OUT = TweenInfo.new(TWEEN_SPEED, EASING_STYLE, Enum.EasingDirection.Out)
-	local TweenService = game:GetService("TweenService")
-	local RunService = game:GetService("RunService")
+	local TweenService = __gs("TweenService")
+	local RunService = __gs("RunService")
 	local function getCaptionPosition(customEnabled)
 		local enabled = if customEnabled ~= nil then customEnabled else isCompletelyEnabled
 		local yOut = 2
@@ -2017,13 +2009,13 @@ end
 end
 local nd9 = {Name = 'Container', Parent = nd7}
 nd7.Container = nd9
-local function fn8(script, require, game)
+local function fn8(script, require)
 local hasBecomeOldTheme = false
 local previousInsetHeight = 0
 return function(Icon)
-	local GuiService = game:GetService("GuiService")
-	local Players =  game:GetService("Players")
-	local UserInputService = game:GetService("UserInputService")
+	local GuiService = __gs("GuiService")
+	local Players =  __gs("Players")
+	local UserInputService = __gs("UserInputService")
 	local container = {}
 	local Signal = require(script.Parent.Parent.Packages.GoodSignal)
 	local insetChanged = Signal.new()
@@ -2205,9 +2197,9 @@ end
 end
 local nd10 = {Name = 'Dropdown', Parent = nd7}
 nd7.Dropdown = nd10
-local function fn9(script, require, game)
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
+local function fn9(script, require)
+local TweenService = __gs("TweenService")
+local RunService = __gs("RunService")
 local Themes = require(script.Parent.Parent.Features.Themes)
 local PADDING = 0
 return function(icon)
@@ -2221,7 +2213,7 @@ return function(icon)
 	dropdown.ZIndex = -2
 	dropdown.ClipsDescendants = true
 	dropdown.Parent = icon.widget
-	local GuiService = game:GetService("GuiService")
+	local GuiService = __gs("GuiService")
 	icon:setBehaviour("Dropdown", "BackgroundTransparency", function(value)
 		local preference = GuiService.PreferredTransparency
 		local newValue = value * preference
@@ -2482,7 +2474,7 @@ end
 end
 local nd11 = {Name = 'Indicator', Parent = nd7}
 nd7.Indicator = nd11
-local function fn10(script, require, game)
+local function fn10(script, require)
 return function(icon, Icon)
 	local widget = icon.widget
 	local contents = icon:getInstance("Contents")
@@ -2504,8 +2496,8 @@ return function(icon, Icon)
 	indicatorButton.BorderSizePixel = 0
 	indicatorButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 	indicatorButton.Parent = indicator
-	local GuiService = game:GetService("GuiService")
-	local GamepadService = game:GetService("GamepadService")
+	local GuiService = __gs("GuiService")
+	local GamepadService = __gs("GamepadService")
 	local ourClickRegion = icon:getInstance("ClickRegion")
 	local function selectionChanged()
 		local selectedClickRegion = GuiService.SelectedObject
@@ -2533,7 +2525,7 @@ return function(icon, Icon)
 	local UICorner = Instance.new("UICorner")
 	UICorner.CornerRadius = UDim.new(1, 0)
 	UICorner.Parent = indicatorButton
-	local UserInputService = game:GetService("UserInputService")
+	local UserInputService = __gs("UserInputService")
 	local function setIndicatorVisible(visibility)
 		if visibility == nil then
 			visibility = indicator.Visible
@@ -2569,7 +2561,7 @@ end
 end
 local nd12 = {Name = 'Menu', Parent = nd7}
 nd7.Menu = nd12
-local function fn11(script, require, game)
+local function fn11(script, require)
 return function(icon)
 	local menu = Instance.new("ScrollingFrame")
 	menu.Name = "Menu"
@@ -2729,7 +2721,7 @@ end
 end
 local nd13 = {Name = 'Notice', Parent = nd7}
 nd7.Notice = nd13
-local function fn12(script, require, game)
+local function fn12(script, require)
 return function(icon, Icon)
 	local notice = Instance.new("Frame")
 	notice.Name = "Notice"
@@ -2831,7 +2823,7 @@ end
 end
 local nd14 = {Name = 'Selection', Parent = nd7}
 nd7.Selection = nd14
-local function fn13(script, require, game)
+local function fn13(script, require)
 return function(Icon)
 	local selectionContainer = Instance.new("Frame")
 	selectionContainer.Name = "SelectionContainer"
@@ -2857,8 +2849,8 @@ return function(Icon)
 	UICorner.Name = "UICorner"
 	UICorner.CornerRadius = UDim.new(1, 0)
 	UICorner.Parent = selection
-	local RunService = game:GetService("RunService")
-	local GuiService = game:GetService("GuiService")
+	local RunService = __gs("RunService")
+	local GuiService = __gs("GuiService")
 	local rotationSpeed = 1
 	selection:GetAttributeChangedSignal("RotationSpeed"):Connect(function()
 		rotationSpeed = selection:GetAttribute("RotationSpeed")
@@ -2874,7 +2866,7 @@ end
 end
 local nd15 = {Name = 'Widget', Parent = nd7}
 nd7.Widget = nd15
-local function fn14(script, require, game)
+local function fn14(script, require)
 return function(icon, Icon)
 	local widget = Instance.new("Frame")
 	widget:SetAttribute("WidgetUID", icon.UID)
@@ -2900,7 +2892,7 @@ return function(icon, Icon)
 			end
 		end)
 	end)
-	local GuiService = game:GetService("GuiService")
+	local GuiService = __gs("GuiService")
 	icon:setBehaviour("IconButton", "BackgroundTransparency", function(value)
 		local preference = GuiService.PreferredTransparency
 		local newValue = value * preference
@@ -3040,7 +3032,7 @@ return function(icon, Icon)
 	iconImageCorner.CornerRadius = UDim.new(0, 0)
 	iconImageCorner.Name = "IconImageCorner"
 	iconImageCorner.Parent = iconImage
-	local TweenService = game:GetService("TweenService")
+	local TweenService = __gs("TweenService")
 	local resizingCount = 0
 	local function handleLabelAndImageChangesUnstaggered(forceUpdateString)
 		task.defer(function()
@@ -3223,7 +3215,7 @@ return function(icon, Icon)
 		menuUIListLayout.HorizontalAlignment = Enum.HorizontalAlignment[newAlignment]
 		updateBorderSize()
 	end)
-	local Players = game:GetService("Players")
+	local Players = __gs("Players")
 	local localPlayer = Players.LocalPlayer
 	local lastLocaleId = localPlayer.LocaleId
 	icon.janitor:Add(localPlayer:GetPropertyChangedSignal("LocaleId"):Connect(function()
@@ -3263,10 +3255,10 @@ nd1.Elements = nd7
 local nd16 = {Name = 'Features', Parent = nd1}
 local nd17 = {Name = 'Gamepad', Parent = nd16}
 nd16.Gamepad = nd17
-local function fn15(script, require, game)
-local GamepadService = game:GetService("GamepadService")
-local UserInputService = game:GetService("UserInputService")
-local GuiService = game:GetService("GuiService")
+local function fn15(script, require)
+local GamepadService = __gs("GamepadService")
+local UserInputService = __gs("UserInputService")
+local GuiService = __gs("GuiService")
 local DEFAULT_HIGHLIGHT_KEY = Enum.KeyCode.DPadUp
 local GAMEPAD_INPUT = Enum.PreferredInput.Gamepad
 local Gamepad = {}
@@ -3410,7 +3402,7 @@ return Gamepad
 end
 local nd18 = {Name = 'Overflow', Parent = nd16}
 nd16.Overflow = nd18
-local function fn16(script, require, game)
+local function fn16(script, require)
 local Overflow = {}
 local holders = {}
 local orderedAvailableIcons = {}
@@ -3702,7 +3694,7 @@ end
 return Overflow
 end
 local nd19 = {Name = 'Themes', Parent = nd16}
-local function fn17(script, require, game)
+local function fn17(script, require)
 local Themes = {}
 local Utility = require(script.Parent.Parent.Utility)
 local baseTheme = require(script.Default)
@@ -3982,7 +3974,7 @@ return Themes
 end
 local nd20 = {Name = 'Classic', Parent = nd19}
 nd19.Classic = nd20
-local function fn18(script, require, game)
+local function fn18(script, require)
 return {
 	{"Selection", "Size", UDim2.new(1, -6, 1, -5)},
 	{"Selection", "Position", UDim2.new(0, 3, 0, 3)},
@@ -4004,7 +3996,7 @@ return {
 end
 local nd21 = {Name = 'Default', Parent = nd19}
 nd19.Default = nd21
-local function fn19(script, require, game)
+local function fn19(script, require)
 return {
 	{"IconCorners", "CornerRadius", UDim.new(1, 0)},
 	{"Selection", "RotationSpeed", 1},
@@ -4058,7 +4050,7 @@ nd1.Features = nd16
 local nd22 = {Name = 'Packages', Parent = nd1}
 local nd23 = {Name = 'GoodSignal', Parent = nd22}
 nd22.GoodSignal = nd23
-local function fn20(script, require, game)
+local function fn20(script, require)
 local freeRunnerThread = nil
 local function acquireRunnerThreadAndCallEventHandler(fn, ...)
 	local acquiredRunnerThread = freeRunnerThread
@@ -4169,8 +4161,8 @@ return Signal
 end
 local nd24 = {Name = 'Janitor', Parent = nd22}
 nd22.Janitor = nd24
-local function fn21(script, require, game)
-local RunService = game:GetService("RunService")
+local function fn21(script, require)
+local RunService = __gs("RunService")
 local Heartbeat = RunService.Heartbeat
 local function getPromiseReference()
 	return false
