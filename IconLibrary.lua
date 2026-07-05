@@ -26,11 +26,42 @@ local REMOTE_SOURCES = {
 		url = "https://raw.githubusercontent.com/frappedevs/lucideblox/master/src/modules/util/icons.json",
 		format = "json",
 	},
+	LucideAlt = {
+		url = "https://raw.githubusercontent.com/dawid-scripts/Fluent/master/src/Icons.lua",
+		format = "luau",
+		field = "assets",
+	},
 }
 
-local SVG_ONLY_PREFIXES = {
+local ICONIFY_ALIASES = {
 	Solar = "solar",
 	Blade = "fa",
+	Phosphor = "ph",
+	Tabler = "tabler",
+	Remix = "ri",
+	BoxIcons = "bx",
+	Bootstrap = "bi",
+	Ionicons = "ion",
+	Heroicons = "heroicons",
+	Feather = "fe",
+	MaterialDesign = "mdi",
+	Octicons = "octicon",
+	Carbon = "carbon",
+	Ant = "ant-design",
+	Fluent = "fluent",
+	Iconoir = "iconoir",
+	Majesticons = "majesticons",
+	Akar = "akar-icons",
+	Simple = "simple-icons",
+	Zondicons = "zondicons",
+	Fontisto = "fontisto",
+	Typicons = "typcn",
+	Eva = "eva",
+	Clarity = "clarity",
+	Codicon = "codicon",
+	Ci = "ci",
+	Radix = "radix-icons",
+	Teenyicons = "teenyicons",
 }
 
 local loadedSets = {}
@@ -62,6 +93,7 @@ local function fetchAndCache(name, source)
 end
 
 local function parseData(name, source, raw)
+	local tbl
 	if source.format == "json" then
 		local ok, decoded = pcall(function()
 			return HttpService:JSONDecode(raw)
@@ -70,20 +102,30 @@ local function parseData(name, source, raw)
 			warn("[IconLibrary] Lỗi giải mã JSON cho '" .. name .. "'")
 			return {}
 		end
-		return decoded
+		tbl = decoded
 	else
 		local ok, fn = pcall(loadstring, raw)
 		if not ok or not fn then
 			warn("[IconLibrary] Lỗi loadstring cho '" .. name .. "'")
 			return {}
 		end
-		local runOk, tbl = pcall(fn)
-		if not runOk or typeof(tbl) ~= "table" then
+		local runOk, result = pcall(fn)
+		if not runOk or typeof(result) ~= "table" then
 			warn("[IconLibrary] Lỗi chạy dữ liệu cho '" .. name .. "'")
 			return {}
 		end
-		return tbl
+		tbl = result
 	end
+
+	if source.field then
+		tbl = tbl[source.field]
+		if typeof(tbl) ~= "table" then
+			warn("[IconLibrary] Không tìm thấy field '" .. tostring(source.field) .. "' trong bộ '" .. name .. "'")
+			return {}
+		end
+	end
+
+	return tbl
 end
 
 local function loadSet(name)
@@ -92,7 +134,7 @@ local function loadSet(name)
 	end
 	local source = REMOTE_SOURCES[name]
 	if not source then
-		warn("[IconLibrary] Bộ icon '" .. tostring(name) .. "' không tồn tại hoặc không hỗ trợ (SVG-only)")
+		warn("[IconLibrary] Bộ icon '" .. tostring(name) .. "' không tồn tại hoặc không hỗ trợ (dùng getRawSVG cho bộ SVG-only)")
 		loadedSets[name] = {}
 		return loadedSets[name]
 	end
@@ -128,13 +170,9 @@ function IconLibrary.get(setName, iconName)
 	return nil
 end
 
-function IconLibrary.getRawSVG(setName, iconName)
-	local prefix = SVG_ONLY_PREFIXES[setName]
-	if not prefix then
-		warn("[IconLibrary] '" .. tostring(setName) .. "' không phải bộ SVG được hỗ trợ")
-		return nil
-	end
-	local path = CACHE_FOLDER .. "/" .. setName .. "_" .. iconName .. ".svg"
+function IconLibrary.getRawSVG(setNameOrPrefix, iconName)
+	local prefix = ICONIFY_ALIASES[setNameOrPrefix] or setNameOrPrefix
+	local path = CACHE_FOLDER .. "/" .. prefix .. "_" .. iconName .. ".svg"
 	if isfile(path) then
 		return readfile(path)
 	end
@@ -143,14 +181,34 @@ function IconLibrary.getRawSVG(setName, iconName)
 		return game:HttpGet(url)
 	end)
 	if not ok then
-		warn("[IconLibrary] Không tải được SVG '" .. iconName .. "': " .. tostring(svg))
+		warn("[IconLibrary] Không tải được SVG '" .. iconName .. "' từ bộ '" .. prefix .. "': " .. tostring(svg))
+		return nil
+	end
+	if svg == "" or svg:match("^404") then
+		warn("[IconLibrary] Icon '" .. iconName .. "' không tồn tại trong bộ '" .. prefix .. "'")
 		return nil
 	end
 	pcall(function()
 		writefile(path, svg)
 	end)
-	warn("[IconLibrary] Lưu ý: '" .. setName .. "' là SVG-only, Roblox không render được làm ảnh icon trực tiếp. Dữ liệu SVG chỉ được cache lại để dùng ngoài (vd tự convert sang PNG rồi upload asset).")
+	warn("[IconLibrary] Lưu ý: '" .. prefix .. "' là SVG-only, Roblox không render được làm ảnh icon trực tiếp. Dữ liệu SVG chỉ được cache lại để dùng ngoài (vd tự convert sang PNG rồi upload asset).")
 	return svg
+end
+
+function IconLibrary.listAssetSets()
+	local names = {}
+	for name in pairs(REMOTE_SOURCES) do
+		table.insert(names, name)
+	end
+	return names
+end
+
+function IconLibrary.listSVGAliases()
+	local names = {}
+	for name in pairs(ICONIFY_ALIASES) do
+		table.insert(names, name)
+	end
+	return names
 end
 
 function IconLibrary.clearCache()
